@@ -89,7 +89,7 @@ orderForm?.addEventListener('submit', async function (e) {
     `Mohon info lebih lanjut. Terima kasih!`
   );
 
-  const waNumber = '6281198311104';
+  const waNumber = '628119831104';
   window.open(`https://wa.me/${waNumber}?text=${message}`, '_blank', 'noopener,noreferrer');
 });
 
