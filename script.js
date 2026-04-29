@@ -38,14 +38,18 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 
-// ===== ORDER FORM – WhatsApp redirect =====
+// ===== ORDER FORM – Save to Google Sheets + WhatsApp redirect =====
+
+// Paste your deployed Apps Script Web App URL here:
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQqbnE4vYhMD6JEBlEh7sgR1A0-qS4wVSKnmOuwZcPZLAM4f5ebcVM7gc5D93qLo0b/exec';
+
 const orderForm = document.querySelector('.order-form');
-orderForm?.addEventListener('submit', function (e) {
+orderForm?.addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const area = document.getElementById('area').value;
+  const name    = document.getElementById('name').value.trim();
+  const phone   = document.getElementById('phone').value.trim();
+  const area    = document.getElementById('area').value;
   const perfume = document.getElementById('perfume').value;
 
   if (!name || !phone || !area) {
@@ -53,6 +57,30 @@ orderForm?.addEventListener('submit', function (e) {
     return;
   }
 
+  // Disable button to prevent double-submit
+  const submitBtn = orderForm.querySelector('[type="submit"]');
+  const originalText = submitBtn.textContent;
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Mengirim...';
+
+  // --- Send data to Google Sheets ---
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      // Apps Script requires text/plain to avoid a CORS preflight
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ name, phone, area, perfume }),
+    });
+  } catch (err) {
+    // Non-blocking: log the error but still proceed to WhatsApp
+    console.error('Gagal menyimpan ke Google Sheets:', err);
+  }
+
+  // Re-enable button
+  submitBtn.disabled = false;
+  submitBtn.textContent = originalText;
+
+  // --- Open WhatsApp ---
   const message = encodeURIComponent(
     `Halo FreshLux! 👋\n\nSaya ingin memesan laundry:\n\n` +
     `👤 Nama: ${name}\n` +
@@ -61,8 +89,7 @@ orderForm?.addEventListener('submit', function (e) {
     `Mohon info lebih lanjut. Terima kasih!`
   );
 
-  // Replace with actual WhatsApp business number
-  const waNumber = '6281234567890';
+  const waNumber = '6281198311104';
   window.open(`https://wa.me/${waNumber}?text=${message}`, '_blank', 'noopener,noreferrer');
 });
 
