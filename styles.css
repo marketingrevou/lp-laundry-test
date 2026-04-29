@@ -698,7 +698,8 @@ ul { list-style: none; }
   .mobile-menu.is-open { display: flex; }
 
   .hero { padding: 48px 0 0; }
-  .hero-inner { grid-template-columns: 1fr; gap: 48px; text-align: center; }
+  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+  .hero-text { text-align: center; }
   .hero-sub { margin: 0 auto 36px; }
   .hero-actions { justify-content: center; }
   .hero-trust { justify-content: center; }
